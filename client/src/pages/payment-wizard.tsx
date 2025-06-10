@@ -30,22 +30,39 @@ export default function PaymentWizard() {
 
     setIsProcessing(true);
     try {
-      const response = await fetch("/api/payment/process", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...policyData, ...personalData }),
-      });
-
-      const result = await response.json();
+      // Simulate payment processing delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
-      if (result.success) {
-        setPaymentTransaction(result.transaction);
-        setCurrentStep(4);
-      } else {
-        throw new Error(result.message || "Payment processing failed");
-      }
+      // Create a mock transaction for frontend-only demo
+      const processingFee = policyData.premiumAmount * 0.03;
+      const tax = policyData.premiumAmount * 0.08;
+      const totalAmount = policyData.premiumAmount + processingFee + tax;
+      
+      const transaction: PaymentTransaction = {
+        id: Date.now(),
+        transactionId: `TXN-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        policyNumber: policyData.policyNumber,
+        coverageType: policyData.coverageType,
+        paymentFrequency: policyData.paymentFrequency,
+        premiumAmount: policyData.premiumAmount.toString(),
+        processingFee: processingFee.toFixed(2),
+        tax: tax.toFixed(2),
+        totalAmount: totalAmount.toFixed(2),
+        firstName: personalData.firstName,
+        lastName: personalData.lastName,
+        email: personalData.email,
+        phone: personalData.phone,
+        streetAddress: personalData.streetAddress,
+        city: personalData.city,
+        state: personalData.state,
+        zipCode: personalData.zipCode,
+        coverageDetails: policyData.coverageDetails || null,
+        status: "completed",
+        createdAt: new Date()
+      };
+      
+      setPaymentTransaction(transaction);
+      setCurrentStep(4);
     } catch (error) {
       console.error("Payment processing error:", error);
       alert("Payment processing failed. Please try again.");
