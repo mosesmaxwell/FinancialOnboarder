@@ -59,7 +59,7 @@ export default function PaymentWizard() {
         coverageDetails: policyData.coverageDetails || null,
         status: "completed",
         createdAt: new Date()
-      };
+      } as PaymentTransaction;
       
       setPaymentTransaction(transaction);
       setCurrentStep(4);
